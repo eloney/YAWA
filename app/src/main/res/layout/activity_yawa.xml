@@ -16,7 +16,7 @@
         android:id="@+id/TextView_appTitle"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp" />
+        android:layout_marginTop="45dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -60,7 +60,8 @@
         android:layout_alignStart="@+id/TextView_appTitle"
         android:layout_alignRight="@+id/TextView_appTitle"
         android:layout_alignEnd="@+id/TextView_appTitle"
-        android:spinnerMode="dropdown" />
+        android:spinnerStyle="@android:style/Widget.Spinner.DropDown"
+         />
 
     <Button
         android:layout_width="wrap_content"

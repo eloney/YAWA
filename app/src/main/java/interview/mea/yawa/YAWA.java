@@ -1,7 +1,10 @@
 package interview.mea.yawa;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,7 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +23,9 @@ import java.util.List;
 public class YAWA extends Activity implements View.OnClickListener {
 
     private List<String> dayList = new ArrayList<String>();
-    private int dayCount = 16;
+    private int dayCountMax = 16;
     private int defaultDays = 7;
-    private EditText cityNameText;
+    private EditText cityNameEditText;
     private Spinner daySpinner;
     private ArrayAdapter<String> dayAdapter;
     private Button checkWeatherButton;
@@ -37,7 +40,7 @@ public class YAWA extends Activity implements View.OnClickListener {
 
 
         //initialize dayList
-        for (int i = 1;i <= dayCount; i++){
+        for (int i = 1;i <= dayCountMax; i++){
             if (i == 1){
                 dayList.add(i + "day");
             } else {
@@ -45,19 +48,43 @@ public class YAWA extends Activity implements View.OnClickListener {
             }
         }
 
-        cityNameText = (EditText)findViewById(R.id.EditText_cityName);
+        cityNameEditText = (EditText)findViewById(R.id.EditText_cityName);
         daySpinner = (Spinner)findViewById(R.id.Spinner_Days);
         checkWeatherButton = (Button)findViewById(R.id.Button_CheckWeather);
 
+
         dayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,dayList);
         daySpinner.setAdapter(dayAdapter);
-        daySpinner.setSelection(defaultDays-1);
+        daySpinner.setSelection(defaultDays-1,true);
 
 
 
         findViewById(R.id.Activity_YAWA_main).setOnClickListener(this);
+        checkWeatherButton.setOnClickListener(checkWeather);
 
     }
+
+    private View.OnClickListener checkWeather = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            String cityName = cityNameEditText.getText().toString();
+            if(!checkInternetAccess()){
+                new AlertDialog.Builder(YAWA.this).setMessage("Please check your internet connection.").setPositiveButton("OK",null).show();
+            }
+            else if (cityName.equals("")){
+                new AlertDialog.Builder(YAWA.this).setMessage("Please type in a city name.").setPositiveButton("OK",null).show();
+            }
+            else{
+                Intent intent = new Intent();
+                intent.setClass(YAWA.this, WeatherInfo.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("KEY_CITYNAME", cityNameEditText.getText().toString());
+                bundle.putInt("KEY_DAYS", daySpinner.getSelectedItemPosition() + 1);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        }
+    };
 
 
     @Override
@@ -93,5 +120,16 @@ public class YAWA extends Activity implements View.OnClickListener {
                 break;
         }
 
+    }
+
+    public Boolean checkInternetAccess() {
+        ConnectivityManager con = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
+        boolean wifi = con.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+        boolean internet = con.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+        if (wifi | internet) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
