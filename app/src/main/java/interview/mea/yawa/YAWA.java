@@ -30,7 +30,6 @@ public class YAWA extends Activity implements View.OnClickListener {
     private Spinner daySpinner;
     private Button checkWeatherButton;
 
-    private ArrayAdapter<String> dayAdapter;
     private List<String> dayList = new ArrayList<String>();
     private String cityName = "";
 
@@ -110,7 +109,7 @@ public class YAWA extends Activity implements View.OnClickListener {
             }
         }
 
-        dayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, dayList);
+        ArrayAdapter<String> dayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, dayList);
         daySpinner.setAdapter(dayAdapter);
         daySpinner.setSelection(defaultDays - 1, true);
     }

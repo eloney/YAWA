@@ -90,8 +90,6 @@ public class WeatherInfo extends Activity {
      * Attempts to download the Jason file of the weather.
      */
     public void checkWeather() {
-        showProgress(true);
-
         //generating the url to download Jason file
         //sample url: http://api.openweathermap.org/data/2.5/forecast/daily?mode=json&units=metric&q=auckland&cnt=7
         String url = "http://api.openweathermap.org/data/2.5/forecast/daily";
@@ -138,6 +136,12 @@ public class WeatherInfo extends Activity {
             } else {
                 convertJSONToEntity(weatherData);
             }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgress(true);
         }
 
         @Override

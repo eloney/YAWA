@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -20,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import interview.mea.yawa.weather.WeatherJSONEntity;
 
@@ -28,61 +30,71 @@ import interview.mea.yawa.weather.WeatherJSONEntity;
  */
 public class WeatherDetail extends Activity {
 
-    private int day;
+    private static final String TAG = WeatherDetail.class.getSimpleName();
+
     private TextView cityName;
     private TextView weatherDate;
     private ProgressBar progressBar;
     private ImageView weatherIcon;
+    private TextView noImage;
     private TextView tempLabel;
     private TextView tempEve;
     private TextView tempMax;
     private TextView tempMin;
     private TextView des;
-    private static final String TAG = WeatherDetail.class.getSimpleName();
 
+    private int day;
     private WeatherJSONEntity weatherResult;
+    private WeatherJSONEntity.List weatherList;
 
 
-    MyAsynctask myTask = new MyAsynctask();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weatherdetail);
-        weatherResult = (WeatherJSONEntity) getIntent().getSerializableExtra(WeatherInfo.WEATHER_RESULT_SER_KEY);
-        day = getIntent().getIntExtra("DAY", 0);
-        WeatherJSONEntity.List weatherList = weatherResult.list.get(day);
+        findViews();
+        extractFromBundle();
+        initViews();
+        downloadIcon();
+    }
 
-        Calendar currentDate = Calendar.getInstance();
-        SimpleDateFormat myFmt = new SimpleDateFormat("yyyy-MM-dd");
-        currentDate.add(Calendar.DAY_OF_MONTH, day + 1);
-
+    private void findViews() {
         cityName = (TextView) findViewById(R.id.TextView_cityName);
         weatherDate = (TextView) findViewById(R.id.TextView_date);
         progressBar = (ProgressBar) findViewById(R.id.ProgressBar_weatherIcon);
         weatherIcon = (ImageView) findViewById(R.id.ImageView_weatherIcon);
+        noImage = (TextView) findViewById(R.id.TextView_noImage);
         tempLabel = (TextView) findViewById(R.id.TextView_temperture);
         tempEve = (TextView) findViewById(R.id.TextView_tempEve);
         tempMax = (TextView) findViewById(R.id.TextView_tempMax);
         tempMin = (TextView) findViewById(R.id.TextView_tempMin);
         des = (TextView) findViewById(R.id.TextView_des);
+    }
 
-        cityName.setText(weatherResult.city.name.toString() + " Weather");
-        weatherDate.setText(day == 0 ? "Tomorrow" : myFmt.format(currentDate.getTime()).toString());
+    private void extractFromBundle(){
+        weatherResult = (WeatherJSONEntity) getIntent().getSerializableExtra(WeatherInfo.KEY_WEATHER_RESULT_SER);
+        day = getIntent().getIntExtra(WeatherInfo.KEY_DAY, 0);
+        weatherList = weatherResult.list.get(day);
+    }
+
+    private void initViews() {
+        //get matching date
+        Calendar currentDate = Calendar.getInstance();
+        SimpleDateFormat myFmt = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        currentDate.add(Calendar.DAY_OF_MONTH, day + 1);
+
+        //setting the text
+        cityName.setText(weatherResult.city.name + " Weather");
+        weatherDate.setText(day == 0 ? "Tomorrow" : myFmt.format(currentDate.getTime()));
         tempEve.setText(weatherList.temp.eve + "℃");
         tempMax.setText("Max " + weatherList.temp.max + "℃");
         tempMin.setText("Min " + weatherList.temp.min + "℃");
         des.setText(weatherList.weather.get(0).description);
-
-
-        myTask = new MyAsynctask();
-
-        myTask.execute("http://openweathermap.org/img/w/" + weatherList.weather.get(0).icon + ".png");
     }
 
-
-        /**
-     * Shows the progress UI and hides the weather info list view..
+    /**
+     * Shows the progress UI and hides the weather icon
      */
     private void showProgress(final boolean show) {
         progressBar.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
@@ -90,19 +102,28 @@ public class WeatherDetail extends Activity {
 
     }
 
+    private void downloadIcon() {
+        DownloadIconTask downloadIcon = new DownloadIconTask();
+        //Adding a regular expression to fix a bug from http://openweathermap.org/ (It replies 04dd for broken clouds weather)
+        String parameters = weatherList.weather.get(0).icon.equals("04dd")? "04d":weatherList.weather.get(0).icon;
+        downloadIcon.execute("http://openweathermap.org/img/w/" + parameters + ".png");
+    }
 
-    class MyAsynctask extends AsyncTask<String, Integer, Bitmap> {
+
+
+    /**
+     * AsyncTask to download weather icon
+     */
+    class DownloadIconTask extends AsyncTask<String, Integer, Bitmap> {
         Bitmap bm = null;
-
 
         @Override
         protected Bitmap doInBackground(String... params) {
             HttpClient hc = new DefaultHttpClient();
             HttpGet hg = new HttpGet(params[0]);
-            int ch = -1;
+            int ch;
             byte[] buffer = new byte[128];
-            String s = null;
-            InputStream is = null;
+            InputStream is;
             try {
                 HttpResponse hr = hc.execute(hg);
                 HttpEntity entity = hr.getEntity();
@@ -118,8 +139,8 @@ public class WeatherDetail extends Activity {
                     is.close();
                 }
 
-
             } catch (Exception e) {
+                Log.d(TAG, e.toString());
                 e.printStackTrace();
             }
             return bm;
@@ -129,6 +150,7 @@ public class WeatherDetail extends Activity {
         @Override
         protected void onCancelled() {
             super.onCancelled();
+            showProgress(false);
         }
 
 
@@ -138,12 +160,10 @@ public class WeatherDetail extends Activity {
             if (result != null) {
                 showProgress(false);
                 weatherIcon.setImageBitmap(bm);
-
-
             } else {
+                showProgress(false);
+                noImage.setVisibility(View.VISIBLE);
             }
-
-
         }
 
 

@@ -1,90 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/TextView_cityName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="City Name"
-        android:id="@+id/TextView_cityName"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="45dp" />
+        android:layout_marginTop="45dp"
+        android:text="City Name"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
+        android:id="@+id/TextView_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Date"
-        android:id="@+id/TextView_date"
         android:layout_below="@+id/TextView_cityName"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="Date"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ImageView
+        android:id="@+id/ImageView_weatherIcon"
         android:layout_width="150px"
         android:layout_height="150px"
-        android:id="@+id/ImageView_weatherIcon"
-        android:layout_marginTop="45dp"
         android:layout_below="@+id/TextView_date"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="45dp"
         android:visibility="invisible" />
 
     <ProgressBar
-        android:layout_width="100px"
-        android:layout_height="100px"
         android:id="@+id/ProgressBar_weatherIcon"
+        android:layout_width="150px"
+        android:layout_height="150px"
+        android:layout_below="@+id/TextView_date"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="45dp"
-        android:layout_below="@+id/TextView_date"
         android:visibility="invisible" />
 
     <TextView
+        android:id="@+id/TextView_noImage"
+        android:layout_width="150px"
+        android:layout_height="150px"
+        android:layout_below="@+id/TextView_date"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="45dp"
+        android:text="No weather image"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:visibility="invisible"
+        android:singleLine="false"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/TextView_temperture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Temperture"
-        android:id="@+id/TextView_temperture"
         android:layout_below="@+id/ImageView_weatherIcon"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
-        android:singleLine="false" />
+        android:singleLine="false"
+        android:text="Temperture"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Temp Even"
         android:id="@+id/TextView_tempEve"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/TextView_temperture"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="Temp Even"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Temp Max"
         android:id="@+id/TextView_tempMax"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/TextView_tempEve"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="Temp Max"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Temp Min"
         android:id="@+id/TextView_tempMin"
-        android:layout_below="@+id/TextView_tempMax"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Description"
+        android:layout_below="@+id/TextView_tempMax"
+        android:layout_centerHorizontal="true"
+        android:text="Temp Min"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
         android:id="@+id/TextView_des"
-        android:layout_marginTop="70dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/TextView_tempMin"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:text="Description"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>
