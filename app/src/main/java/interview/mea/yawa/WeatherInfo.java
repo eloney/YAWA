@@ -1,5 +1,7 @@
 package interview.mea.yawa;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,7 +13,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -28,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import interview.mea.yawa.weather.WeatherJSONEntity;
@@ -38,52 +40,43 @@ import interview.mea.yawa.weather.WeatherJSONEntity;
  */
 public class WeatherInfo extends Activity {
 
-    private String cityName;
-    private int days;
+    private static final String TAG = WeatherInfo.class.getSimpleName();
+
+    public final static String KEY_WEATHER_RESULT_SER = "KEY_WEATHER_RESULT";
+    public final static String KEY_DAY = "KEY_DAY";
+
     private TextView cityNameLabel;
     private TextView weatherDays;
-    private static final String TAG = WeatherInfo.class.getSimpleName();
     private ProgressBar progressBar;
     private ListView weatherInfo;
+
+    private String cityName;
+    private int days;
     private WeatherJSONEntity weatherResult;
-    public final static String WEATHER_RESULT_SER_KEY = "WEATHER_RESULT";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weathinfo);
+        findViews();
+        extractFromBundle();
+        checkWeather();
+    }
 
+
+    private void findViews() {
         cityNameLabel = (TextView) findViewById(R.id.TextView_cityNameLabel);
         progressBar = (ProgressBar) findViewById(R.id.ProgressBar_checkWeather);
         weatherInfo = (ListView) findViewById(R.id.ListView_weatherInfo);
         weatherDays = (TextView) findViewById(R.id.TextView_weatherDays);
+    }
 
+    private void extractFromBundle() {
         Bundle bundle = this.getIntent().getExtras();
-        cityName = bundle.getString("KEY_CITYNAME");
-        days = bundle.getInt("KEY_DAYS");
-        cityNameLabel.setText("Checking Weather");
-        attemptDownload();
-
-
+        cityName = bundle.getString(YAWA.KEY_CITYNAME);
+        days = bundle.getInt(YAWA.KEY_DAYS);
     }
-
-
-    /**
-     * Attempts to download the Jason file of the weather.
-     */
-    public void attemptDownload() {
-        showProgress(true);
-        //sample url: http://api.openweathermap.org/data/2.5/forecast/daily?mode=json&units=metric&q=auckland&cnt=7
-        String url = "http://api.openweathermap.org/data/2.5/forecast/daily";
-        String parameters = "mode=json&units=metric";
-        parameters = parameters + "&q=" + cityName;
-        parameters = parameters + "&cnt=" + days;
-        url = url + "?" + parameters;
-
-        CheckWeatherTask checkWeatherTask = new CheckWeatherTask();
-        checkWeatherTask.execute(url);
-    }
-
 
     /**
      * Shows the progress UI and hides the weather info list view..
@@ -91,13 +84,33 @@ public class WeatherInfo extends Activity {
     private void showProgress(final boolean show) {
         progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
         weatherInfo.setVisibility(show ? View.GONE : View.VISIBLE);
-
     }
 
+    /**
+     * Attempts to download the Jason file of the weather.
+     */
+    public void checkWeather() {
+        showProgress(true);
 
+        //generating the url to download Jason file
+        //sample url: http://api.openweathermap.org/data/2.5/forecast/daily?mode=json&units=metric&q=auckland&cnt=7
+        String url = "http://api.openweathermap.org/data/2.5/forecast/daily";
+        String parameters = "mode=json&units=metric";
+        parameters = parameters + "&q=" + cityName;
+        parameters = parameters + "&cnt=" + days;
+        url = url + "?" + parameters;
+
+        //AsyncTask
+        CheckWeatherTask checkWeatherTask = new CheckWeatherTask();
+        checkWeatherTask.execute(url);
+    }
+
+    /**
+     * AsyncTask to check weather
+     */
     public class CheckWeatherTask extends AsyncTask<String, Void, String> {
 
-        String weatherData = "";
+        private String weatherData = "";
 
         @Override
         protected String doInBackground(String... url) {
@@ -107,42 +120,23 @@ public class WeatherInfo extends Activity {
                 Log.d(TAG, e.toString());
                 e.printStackTrace();
             }
-
             return weatherData;
-
         }
 
         @Override
         protected void onPostExecute(final String result) {
 
-            JSONObject weatherObject = null;
-            if (weatherData == "") {
+            if (weatherData.equals("")) {
                 {
-                    Toast.makeText(WeatherInfo.this, "TimeOut", Toast.LENGTH_LONG).show();
+                    new AlertDialog.Builder(WeatherInfo.this).setMessage("Timeout,please check the network state.").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }).show();
                 }
             } else {
-                int cod = 0;
-                try {
-                    weatherObject = new JSONObject(weatherData);
-                    cod = weatherObject.getInt("cod");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                if (cod == 404) {
-                    Toast.makeText(WeatherInfo.this, "Check city name", Toast.LENGTH_LONG).show();
-                } else if (cod == 200) {
-                    try {
-                        Gson gson = new Gson();
-                        weatherResult = gson.fromJson(weatherData, WeatherJSONEntity.class);
-                        showProgress(false);
-                        showWeather();
-
-                    } catch (Exception e) {
-                        Log.d(TAG, e.toString());
-                        e.printStackTrace();
-                    }
-                }
+                convertJSONToEntity(weatherData);
             }
         }
 
@@ -154,13 +148,16 @@ public class WeatherInfo extends Activity {
 
     private String downloadUrl(String strUrl) throws IOException {
         String data = "";
-
         InputStream iStream = null;
         HttpURLConnection urlConnection = null;
         try {
             URL url = new URL(strUrl);
+
             // Creating an http connection to communicate with url
             urlConnection = (HttpURLConnection) url.openConnection();
+
+            // Setting timeout
+            urlConnection.setConnectTimeout(10000);
 
             // Connecting to url
             urlConnection.connect();
@@ -171,9 +168,9 @@ public class WeatherInfo extends Activity {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
-            String line = "";
+            String line;
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
@@ -185,22 +182,63 @@ public class WeatherInfo extends Activity {
             Log.d(TAG, e.toString());
             e.printStackTrace();
         } finally {
-            iStream.close();
-            urlConnection.disconnect();
+            if (iStream != null)
+                iStream.close();
+            if (urlConnection != null)
+                urlConnection.disconnect();
         }
 
         return data;
     }
 
+    private void convertJSONToEntity(String weatherData) {
+        int cod = 0;
+
+        try {
+            JSONObject weatherObject;
+            weatherObject = new JSONObject(weatherData);
+            cod = weatherObject.getInt("cod");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (cod == 404) {
+            new AlertDialog.Builder(WeatherInfo.this).setMessage("Sorry, no result. Please check the city name.").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            }).show();
+
+        } else if (cod == 200) {
+            try {
+                Gson gson = new Gson();
+                weatherResult = gson.fromJson(weatherData, WeatherJSONEntity.class);
+                showProgress(false);
+                showWeather();
+
+            } catch (Exception e) {
+                Log.d(TAG, e.toString());
+                e.printStackTrace();
+            }
+        }
+
+    }
+
     private void showWeather() {
         cityNameLabel.setText(weatherResult.city.name + " Weather");
-        Calendar currentDate = Calendar.getInstance();
         ArrayList<Map<String, Object>> basicWeatherLists = new ArrayList<Map<String, Object>>();
-        SimpleDateFormat myFmt = new SimpleDateFormat("yyyy-MM-dd");
+
+        //get current date
+        Calendar currentDate = Calendar.getInstance();
+        SimpleDateFormat myFmt = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+        //ArrayList to show in the list view
         for (int i = 0; i < weatherResult.cnt; i++) {
+            //get matching date
             currentDate.add(Calendar.DAY_OF_MONTH, 1);
             Map<String, Object> item = new HashMap<String, Object>();
-            item.put("title", myFmt.format(currentDate.getTime()).toString());
+            item.put("title", myFmt.format(currentDate.getTime()));
             item.put("text", weatherResult.list.get(i).temp.eve.toString() + "℃, " + weatherResult.list.get(i).weather.get(0).description);
             basicWeatherLists.add(item);
         }
@@ -223,14 +261,10 @@ public class WeatherInfo extends Activity {
     private void goToWeatherDetail(int day) {
         Intent intent = new Intent(this, WeatherDetail.class);
         Bundle bundle = new Bundle();
-        bundle.putInt("DAY", day);
-        bundle.putSerializable(WEATHER_RESULT_SER_KEY, weatherResult);
+        bundle.putInt(KEY_DAY, day);
+        bundle.putSerializable(KEY_WEATHER_RESULT_SER, weatherResult);
         intent.putExtras(bundle);
 
         startActivity(intent);
-
-
     }
-
-
 }

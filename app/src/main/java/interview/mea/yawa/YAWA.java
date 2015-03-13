@@ -23,6 +23,9 @@ public class YAWA extends Activity implements View.OnClickListener {
     private int dayCountMax = 16;
     private int defaultDays = 7;
 
+    public final static String KEY_CITYNAME = "KEY_CITYNAME";
+    public final static String KEY_DAYS = "KEY_DAYS";
+
     private EditText cityNameEditText;
     private Spinner daySpinner;
     private Button checkWeatherButton;
@@ -68,11 +71,7 @@ public class YAWA extends Activity implements View.OnClickListener {
         ConnectivityManager con = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
         boolean wifi = con.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
         boolean internet = con.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
-        if (wifi | internet) {
-            return true;
-        } else {
-            return false;
-        }
+        return wifi | internet;
     }
 
     private Boolean initCheck() {
@@ -91,8 +90,8 @@ public class YAWA extends Activity implements View.OnClickListener {
         Intent intent = new Intent();
         intent.setClass(YAWA.this, WeatherInfo.class);
         Bundle bundle = new Bundle();
-        bundle.putString("KEY_CITYNAME", cityName);
-        bundle.putInt("KEY_DAYS", daySpinner.getSelectedItemPosition() + 1);
+        bundle.putString(KEY_CITYNAME, cityName);
+        bundle.putInt(KEY_DAYS, daySpinner.getSelectedItemPosition() + 1);
         intent.putExtras(bundle);
         startActivity(intent);
     }
