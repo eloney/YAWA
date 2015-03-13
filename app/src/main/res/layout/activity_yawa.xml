@@ -1,76 +1,77 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/Activity_YAWA_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".YAWA"
-    android:id="@+id/Activity_YAWA_main"
-    android:clickable="true">
+    tools:context=".YAWA">
 
     <TextView
+        android:id="@+id/TextView_appTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Weather Checker"
-        android:id="@+id/TextView_appTitle"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="45dp" />
+        android:layout_marginTop="45dp"
+        android:text="Weather Checker"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
+        android:id="@+id/TextView_labelCityHint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Please type a full name of a city"
-        android:id="@+id/TextView_labelCityHint"
         android:layout_below="@+id/TextView_appTitle"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="49dp" />
+        android:layout_marginTop="49dp"
+        android:text="Please type a full name of a city"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
+        android:id="@+id/EditText_cityName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/EditText_cityName"
-        android:layout_below="@+id/TextView_labelCityHint"
-        android:inputType="text"
-        android:layout_alignRight="@+id/TextView_labelCityHint"
         android:layout_alignEnd="@+id/TextView_labelCityHint"
         android:layout_alignLeft="@+id/TextView_labelCityHint"
+        android:layout_alignRight="@+id/TextView_labelCityHint"
         android:layout_alignStart="@+id/TextView_labelCityHint"
-        android:hint="e.g. Auckland" />
+        android:layout_below="@+id/TextView_labelCityHint"
+        android:hint="e.g. Auckland"
+        android:inputType="text" />
 
     <TextView
+        android:id="@+id/TextView_DaysHint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Check next"
-        android:id="@+id/TextView_DaysHint"
-        android:layout_below="@+id/EditText_cityName"
         android:layout_alignLeft="@+id/EditText_cityName"
         android:layout_alignStart="@+id/EditText_cityName"
-        android:layout_marginTop="50dp" />
+        android:layout_below="@+id/EditText_cityName"
+        android:layout_marginTop="50dp"
+        android:text="Check next"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Spinner
+        android:id="@+id/Spinner_Days"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/Spinner_Days"
-        android:layout_below="@+id/TextView_DaysHint"
-        android:layout_alignLeft="@+id/TextView_appTitle"
-        android:layout_alignStart="@+id/TextView_appTitle"
-        android:layout_alignRight="@+id/TextView_appTitle"
         android:layout_alignEnd="@+id/TextView_appTitle"
-        android:spinnerStyle="@android:style/Widget.Spinner.DropDown"
-         />
+        android:layout_alignLeft="@+id/TextView_appTitle"
+        android:layout_alignRight="@+id/TextView_appTitle"
+        android:layout_alignStart="@+id/TextView_appTitle"
+        android:layout_below="@+id/TextView_DaysHint"
+        android:spinnerStyle="@android:style/Widget.Spinner.DropDown" />
 
     <Button
+        android:id="@+id/Button_CheckWeather"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tell me the weather"
-        android:id="@+id/Button_CheckWeather"
         android:layout_below="@+id/Spinner_Days"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="47dp" />
+        android:layout_marginTop="47dp"
+        android:text="Tell me the weather" />
 
 </RelativeLayout>
 
