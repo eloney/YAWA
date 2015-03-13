@@ -84,7 +84,7 @@ public class WeatherDetail extends Activity {
         //setting the text
         cityName.setText(weatherResult.city.name + " " + getString(R.string.weather));
         weatherDate.setText(day == 0 ? getString(R.string.tmr) : myFmt.format(currentDate.getTime()));
-        tempEve.setText(weatherList.temp.eve + getString(R.string.tempsymbol));
+        tempEve.setText(weatherList.temp.day + getString(R.string.tempsymbol));
         tempMax.setText(getString(R.string.max) + " " + weatherList.temp.max + getString(R.string.tempsymbol));
         tempMin.setText(getString(R.string.min) + " " + weatherList.temp.min + getString(R.string.tempsymbol));
         des.setText(weatherList.weather.get(0).description);

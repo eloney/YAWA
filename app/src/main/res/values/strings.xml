@@ -27,7 +27,7 @@
     <string name="tmr">Tomorrow</string>
     <string name="min">Min</string>
     <string name="max">Max</string>
-    <string name="tempture">Temperture</string>
+    <string name="tempture">Temperature</string>
 
     <string name="yawa_title">Weather Checker</string>
     <string name="yawa_citylabel">Please type a full name of a city</string>

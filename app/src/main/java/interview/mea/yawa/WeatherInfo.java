@@ -246,7 +246,7 @@ public class WeatherInfo extends Activity {
             Map<String, Object> item = new HashMap<String, Object>();
             item.put("title", myFmt.format(currentDate.getTime()));
             //example: "12.20℃, moderate rain"
-            item.put("text", weatherResult.list.get(i).temp.eve.toString() + getString(R.string.tempsymbol) + getString(R.string.comma) + " " + weatherResult.list.get(i).weather.get(0).description);
+            item.put("text", weatherResult.list.get(i).temp.day.toString() + getString(R.string.tempsymbol) + getString(R.string.comma) + " " + weatherResult.list.get(i).weather.get(0).description);
             basicWeatherLists.add(item);
         }
 
