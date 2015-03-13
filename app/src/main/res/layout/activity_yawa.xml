@@ -17,7 +17,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="45dp"
-        android:text="Weather Checker"
+        android:text="@string/yawa_title"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -27,7 +27,7 @@
         android:layout_below="@+id/TextView_appTitle"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="49dp"
-        android:text="Please type a full name of a city"
+        android:text="@string/yawa_citylabel"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
@@ -39,7 +39,7 @@
         android:layout_alignRight="@+id/TextView_labelCityHint"
         android:layout_alignStart="@+id/TextView_labelCityHint"
         android:layout_below="@+id/TextView_labelCityHint"
-        android:hint="e.g. Auckland"
+        android:hint="@string/yawa_cityplaceholder"
         android:inputType="text" />
 
     <TextView
@@ -50,7 +50,7 @@
         android:layout_alignStart="@+id/EditText_cityName"
         android:layout_below="@+id/EditText_cityName"
         android:layout_marginTop="50dp"
-        android:text="Check next"
+        android:text="@string/yawa_daylabel"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Spinner
@@ -71,7 +71,7 @@
         android:layout_below="@+id/Spinner_Days"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="47dp"
-        android:text="Tell me the weather" />
+        android:text="@string/button_checkweather" />
 
 </RelativeLayout>
 

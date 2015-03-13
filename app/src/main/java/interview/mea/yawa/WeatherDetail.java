@@ -25,9 +25,7 @@ import java.util.Locale;
 
 import interview.mea.yawa.weather.WeatherJSONEntity;
 
-/**
- * Created by Ben_Hasee on 13/03/2015.
- */
+
 public class WeatherDetail extends Activity {
 
     private static final String TAG = WeatherDetail.class.getSimpleName();
@@ -46,7 +44,6 @@ public class WeatherDetail extends Activity {
     private int day;
     private WeatherJSONEntity weatherResult;
     private WeatherJSONEntity.List weatherList;
-
 
 
     @Override
@@ -72,7 +69,7 @@ public class WeatherDetail extends Activity {
         des = (TextView) findViewById(R.id.TextView_des);
     }
 
-    private void extractFromBundle(){
+    private void extractFromBundle() {
         weatherResult = (WeatherJSONEntity) getIntent().getSerializableExtra(WeatherInfo.KEY_WEATHER_RESULT_SER);
         day = getIntent().getIntExtra(WeatherInfo.KEY_DAY, 0);
         weatherList = weatherResult.list.get(day);
@@ -81,15 +78,15 @@ public class WeatherDetail extends Activity {
     private void initViews() {
         //get matching date
         Calendar currentDate = Calendar.getInstance();
-        SimpleDateFormat myFmt = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat myFmt = new SimpleDateFormat(getString(R.string.format_date), Locale.getDefault());
         currentDate.add(Calendar.DAY_OF_MONTH, day + 1);
 
         //setting the text
-        cityName.setText(weatherResult.city.name + " Weather");
-        weatherDate.setText(day == 0 ? "Tomorrow" : myFmt.format(currentDate.getTime()));
-        tempEve.setText(weatherList.temp.eve + "℃");
-        tempMax.setText("Max " + weatherList.temp.max + "℃");
-        tempMin.setText("Min " + weatherList.temp.min + "℃");
+        cityName.setText(weatherResult.city.name + " " + getString(R.string.weather));
+        weatherDate.setText(day == 0 ? getString(R.string.tmr) : myFmt.format(currentDate.getTime()));
+        tempEve.setText(weatherList.temp.eve + getString(R.string.tempsymbol));
+        tempMax.setText(getString(R.string.max) + " " + weatherList.temp.max + getString(R.string.tempsymbol));
+        tempMin.setText(getString(R.string.min) + " " + weatherList.temp.min + getString(R.string.tempsymbol));
         des.setText(weatherList.weather.get(0).description);
     }
 
@@ -104,11 +101,12 @@ public class WeatherDetail extends Activity {
 
     private void downloadIcon() {
         DownloadIconTask downloadIcon = new DownloadIconTask();
-        //Adding a regular expression to fix a bug from http://openweathermap.org/ (It replies 04dd for broken clouds weather)
-        String parameters = weatherList.weather.get(0).icon.equals("04dd")? "04d":weatherList.weather.get(0).icon;
-        downloadIcon.execute("http://openweathermap.org/img/w/" + parameters + ".png");
+        //Using substring() to fix a bug from http://openweathermap.org/ (It replies 04dd for broken clouds weather and 03dd for scattered clouds)
+        String parameters = weatherList.weather.get(0).icon.substring(0,3);
+        //example: "http://openweathermap.org/img/w/" + parameters + ".png";
+        String url = getString(R.string.url_weathericon_basic) + parameters + getString(R.string.url_weathericon_append);
+        downloadIcon.execute(url);
     }
-
 
 
     /**

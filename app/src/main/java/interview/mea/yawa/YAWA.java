@@ -20,8 +20,8 @@ import java.util.List;
 
 public class YAWA extends Activity implements View.OnClickListener {
 
-    private int dayCountMax = 16;
-    private int defaultDays = 7;
+    private final static int dayCountMax = 16;
+    private final static int defaultDays = 7;
 
     public final static String KEY_CITYNAME = "KEY_CITYNAME";
     public final static String KEY_DAYS = "KEY_DAYS";
@@ -75,10 +75,10 @@ public class YAWA extends Activity implements View.OnClickListener {
 
     private Boolean initCheck() {
         if (!checkInternetAccess()) {
-            new AlertDialog.Builder(YAWA.this).setMessage("Please check your internet connection.").setPositiveButton("OK", null).show();
+            new AlertDialog.Builder(YAWA.this).setMessage(R.string.hint_checknetwork).setPositiveButton(R.string.button_ok, null).show();
             return false;
         } else if (cityName.equals("")) {
-            new AlertDialog.Builder(YAWA.this).setMessage("Please type in a city name.").setPositiveButton("OK", null).show();
+            new AlertDialog.Builder(YAWA.this).setMessage(R.string.hint_checkcityname).setPositiveButton(R.string.button_ok, null).show();
             return false;
         } else {
             return true;
@@ -103,9 +103,9 @@ public class YAWA extends Activity implements View.OnClickListener {
         //init a day list
         for (int i = 1; i <= dayCountMax; i++) {
             if (i == 1) {
-                dayList.add(i + "day");
+                dayList.add(i + getString(R.string.day_singular));
             } else {
-                dayList.add(i + "days");
+                dayList.add(i + getString(R.string.day_plural));
             }
         }
 

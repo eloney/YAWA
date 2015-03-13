@@ -35,9 +35,6 @@ import java.util.Map;
 import interview.mea.yawa.weather.WeatherJSONEntity;
 
 
-/**
- * Created by Ben_Hasee on 12/03/2015.
- */
 public class WeatherInfo extends Activity {
 
     private static final String TAG = WeatherInfo.class.getSimpleName();
@@ -92,11 +89,16 @@ public class WeatherInfo extends Activity {
     public void checkWeather() {
         //generating the url to download Jason file
         //sample url: http://api.openweathermap.org/data/2.5/forecast/daily?mode=json&units=metric&q=auckland&cnt=7
-        String url = "http://api.openweathermap.org/data/2.5/forecast/daily";
-        String parameters = "mode=json&units=metric";
-        parameters = parameters + "&q=" + cityName;
-        parameters = parameters + "&cnt=" + days;
-        url = url + "?" + parameters;
+//        String url = "http://api.openweathermap.org/data/2.5/forecast/daily";
+//        String parameters = "mode=json&units=metric";
+//        parameters = parameters + "&q=" + cityName;
+//        parameters = parameters + "&cnt=" + days;
+//        url = url + "?" + parameters;
+        String url = getString(R.string.url_weather_basic);
+        String parameters = getString(R.string.url_weather_parameters_basic);
+        parameters = parameters + getString(R.string.url_weather_parameters_city) + cityName;
+        parameters = parameters + getString(R.string.url_weather_parameters_days) + days;
+        url = url + parameters;
 
         //AsyncTask
         CheckWeatherTask checkWeatherTask = new CheckWeatherTask();
@@ -126,7 +128,7 @@ public class WeatherInfo extends Activity {
 
             if (weatherData.equals("")) {
                 {
-                    new AlertDialog.Builder(WeatherInfo.this).setMessage("Timeout,please check the network state.").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    new AlertDialog.Builder(WeatherInfo.this).setMessage(R.string.hint_timeout).setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
@@ -207,7 +209,7 @@ public class WeatherInfo extends Activity {
         }
 
         if (cod == 404) {
-            new AlertDialog.Builder(WeatherInfo.this).setMessage("Sorry, no result. Please check the city name.").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            new AlertDialog.Builder(WeatherInfo.this).setMessage(R.string.hint_noresult).setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     finish();
@@ -230,12 +232,12 @@ public class WeatherInfo extends Activity {
     }
 
     private void showWeather() {
-        cityNameLabel.setText(weatherResult.city.name + " Weather");
+        cityNameLabel.setText(weatherResult.city.name + " " + getString(R.string.weather));
         ArrayList<Map<String, Object>> basicWeatherLists = new ArrayList<Map<String, Object>>();
 
         //get current date
         Calendar currentDate = Calendar.getInstance();
-        SimpleDateFormat myFmt = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat myFmt = new SimpleDateFormat(getString(R.string.format_date), Locale.getDefault());
 
         //ArrayList to show in the list view
         for (int i = 0; i < weatherResult.cnt; i++) {
@@ -243,14 +245,20 @@ public class WeatherInfo extends Activity {
             currentDate.add(Calendar.DAY_OF_MONTH, 1);
             Map<String, Object> item = new HashMap<String, Object>();
             item.put("title", myFmt.format(currentDate.getTime()));
-            item.put("text", weatherResult.list.get(i).temp.eve.toString() + "℃, " + weatherResult.list.get(i).weather.get(0).description);
+            //example: "12.20℃, moderate rain"
+            item.put("text", weatherResult.list.get(i).temp.eve.toString() + getString(R.string.tempsymbol) + getString(R.string.comma) + " " + weatherResult.list.get(i).weather.get(0).description);
             basicWeatherLists.add(item);
         }
 
         SimpleAdapter adapter = new SimpleAdapter(this, basicWeatherLists, android.R.layout.simple_list_item_2,
                 new String[]{"title", "text"}, new int[]{android.R.id.text1, android.R.id.text2});
         weatherInfo.setAdapter(adapter);
-        weatherDays.setText("Next " + weatherResult.cnt + (weatherResult.cnt == 1 ? " Day (click for more info)" : " Days (click for more info)"));
+        //example: "Next 7 Days (click for more info)"
+        weatherDays.setText(getString(R.string.next) + " " + weatherResult.cnt
+                + (weatherResult.cnt == 1 ?
+                " " + getString(R.string.day_singular) + " " + getString(R.string.weatherinfo_clickformore)
+                :
+                " " + getString(R.string.day_plural) + " " + getString(R.string.weatherinfo_clickformore)));
 
         weatherInfo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
